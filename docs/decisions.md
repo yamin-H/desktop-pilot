@@ -18,3 +18,16 @@ Unreadable messages are counted and skipped.
 
 ## Stopping a feed = cancelling its task
 No custom stop flag. Cancelling closes the connection cleanly.
+
+
+## Binance: the public trade stream is our price source
+One message per trade, no API key needed. Each message becomes one PriceTick.
+We keep the trade time (`T`) as `exchange_time`, not the message time.
+
+## Symbols are translated from an explicit list
+`BTCUSDT` cannot be split into base and quote reliably. A feed is created with
+the symbols we want (`BTC/USDT`) and builds its translation table from them.
+A symbol we did not ask for is treated as an unreadable message.
+
+## Binance connections last at most 24 hours
+Binance closes every connection after 24 hours. Normal reconnect handles it.
