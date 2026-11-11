@@ -1,0 +1,21 @@
+services:
+  db:
+    image: timescale/timescaledb:latest-pg17
+    environment:
+      POSTGRES_USER: deskpilot
+      POSTGRES_PASSWORD: deskpilot
+      POSTGRES_DB: deskpilot
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      # -h 127.0.0.1 matters: during first start Postgres runs a temporary server that
+      # only listens on a local socket. Checking over TCP waits for the real one.
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U deskpilot -d deskpilot"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  db-data:

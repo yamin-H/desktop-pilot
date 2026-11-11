@@ -1,4 +1,4 @@
-.PHONY: test lint format
+.PHONY: test lint format db-up db-down db-reset migrate
 
 test:
 	uv run pytest
@@ -9,3 +9,16 @@ lint:
 format:
 	uv run ruff format .
 	uv run ruff check --fix .
+
+db-up:
+	docker compose up -d --wait db
+
+db-down:
+	docker compose down
+
+# WARNING: deletes all stored data
+db-reset:
+	docker compose down -v
+
+migrate:
+	uv run python -m deskpilot.storage.migrate
