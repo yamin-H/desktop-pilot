@@ -53,3 +53,26 @@ whole message is skipped and counted as a parse error.
 ## Kraken: a refused subscription is loud
 A `success: false` reply becomes a warning, instead of silently waiting for
 prices that never come.
+
+
+## Spreads use last trade prices: a monitoring number, not a profit claim
+The gap is between the last trade on each exchange. It ignores trading fees,
+the size we could actually trade, and the time needed to move coins. Realistic
+numbers will use order books (best bid/ask) later.
+
+## Old prices are never compared
+A price older than `max_age` (30s) is left out of the gap calculation. Age is
+measured on our own clock (when we received the tick), so clock differences
+between us and the exchange do not matter.
+
+## An older tick never replaces a newer one
+After a reconnect, messages can arrive out of order. The board compares the
+exchange's own timestamps and keeps the newer price.
+
+## One gap per coin pair: the widest one
+With more than two exchanges, the board reports the most expensive exchange
+against the cheapest. Equal prices still give two different exchanges.
+
+## All feeds run in one TaskGroup
+Connection errors are handled inside each feed. A real bug in any feed stops all
+of them and is raised, instead of leaving the system half-working in silence.
