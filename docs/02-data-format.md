@@ -37,3 +37,11 @@ exchange-specific data.
 `notional` = quantity x price.
 `dedupe_key` = (exchange, trade_id). Same key means same trade, so saving it
 twice must change nothing.
+
+
+## How trades are stored
+A trade is identified by `(exchange, trade_id)`.
+- Same ID, identical content: a harmless duplicate, ignored.
+- Same ID, different content: a CONFLICT. The stored version is kept, the
+  differing fields are reported, and a warning is logged. Nothing is overwritten.
+Numbers equal in value count as identical (0.002 and 0.00200).

@@ -133,3 +133,23 @@ the same price share one record (see the prices-table decision).
 ## The recorder is called directly for now
 Redis Streams will later sit between ingestion and storage. The recorder's
 `on_tick` interface should not need to change.
+
+
+## The ledger never overwrites and never hides a changed trade
+Same ID and same content is a duplicate and is ignored. Same ID with different
+content is a conflict: the stored trade stays, the differing fields are reported
+and logged. Silently ignoring it would keep wrong data unnoticed; overwriting
+would destroy evidence. The reconciliation engine will build on this.
+
+## Trades are a normal table, saved immediately
+Trades are rare compared with prices, so there is no hypertable and no batching.
+A plain table allows the exchange's trade_id to be a simple primary key.
+
+## The database repeats the model's rules
+CHECK constraints refuse zero quantities, negative fees and unknown sides, even
+though the Trade model already validates them. The database is the last defence.
+
+## Paper trades
+Sample trades have fixed `PAPER-` IDs and fixed times, so seeding is repeatable.
+Fees use mixed currencies on purpose (BTC and USDT), because the profit
+calculation must handle them.
