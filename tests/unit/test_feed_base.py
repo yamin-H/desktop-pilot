@@ -116,7 +116,7 @@ async def test_messages_that_are_not_prices_are_ignored():
 
 async def test_one_bad_message_is_skipped_and_connection_survives():
     got = Collector()
-    feed = FakeFeed([["100", "not-a-number", "101"]], got, backoff=FAST)
+    feed = FakeFeed([["100", "not-a-number", "101", HANG]], got, backoff=FAST)
     async with running(feed):
         await wait_for_ticks(got, 2)
     assert got.prices == [Decimal("100"), Decimal("101")]
