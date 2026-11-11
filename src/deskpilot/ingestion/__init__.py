@@ -8,6 +8,7 @@ from deskpilot.ingestion.base import (
     TickHandler,
 )
 from deskpilot.ingestion.binance import BinanceFeed
+from deskpilot.ingestion.kraken import KrakenFeed
 
 __all__ = [
     "BackoffPolicy",
@@ -16,6 +17,7 @@ __all__ = [
     "FeedDisconnected",
     "FeedStale",
     "FeedStatus",
+    "KrakenFeed",
     "RawMessage",
     "TickHandler",
 ]
