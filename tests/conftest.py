@@ -49,7 +49,7 @@ def test_database_url() -> str:
 async def pool(test_database_url):
     """A connection pool to the test database, with the prices table emptied first."""
     pool = await create_pool(test_database_url, min_size=1, max_size=4)
-    await pool.execute("TRUNCATE prices")
+    await pool.execute("TRUNCATE prices, trades")
     try:
         yield pool
     finally:

@@ -4,7 +4,11 @@ import pytest
 
 async def test_all_migrations_are_applied(pool):
     rows = await pool.fetch("SELECT name FROM schema_migrations ORDER BY name")
-    assert [row["name"] for row in rows] == ["001_extensions.sql", "002_prices.sql"]
+    assert [row["name"] for row in rows] == [
+        "001_extensions.sql",
+        "002_prices.sql",
+        "003_trades.sql",
+    ]
 
 
 async def test_prices_is_a_timescale_hypertable(pool):
