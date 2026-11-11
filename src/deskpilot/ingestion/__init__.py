@@ -7,10 +7,12 @@ from deskpilot.ingestion.base import (
     RawMessage,
     TickHandler,
 )
+from deskpilot.ingestion.binance import BinanceFeed
 
 __all__ = [
     "BackoffPolicy",
     "BaseFeed",
+    "BinanceFeed",
     "FeedDisconnected",
     "FeedStale",
     "FeedStatus",
