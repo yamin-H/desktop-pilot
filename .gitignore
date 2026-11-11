@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# secrets: never commit these
+.env
+
+# big local data
+data/recorded_feeds/*
+!data/recorded_feeds/.gitkeep
