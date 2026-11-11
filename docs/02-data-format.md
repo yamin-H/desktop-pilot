@@ -9,6 +9,8 @@ exchange-specific data.
 2. Every timestamp is timezone-aware and stored in UTC.
 3. Symbols look like `BTC/USDT` (BASE/QUOTE, upper case).
 4. Models are immutable (frozen) and reject unknown fields.
+5. `USD` and `USDT` are different assets. `BTC/USD` and `BTC/USDT` are different
+   symbols and are never compared with each other.
 
 ## PriceTick
 | Field | Meaning |
