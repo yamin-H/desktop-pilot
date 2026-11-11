@@ -76,3 +76,60 @@ against the cheapest. Equal prices still give two different exchanges.
 ## All feeds run in one TaskGroup
 Connection errors are handled inside each feed. A real bug in any feed stops all
 of them and is raised, instead of leaving the system half-working in silence.
+
+
+## Database: TimescaleDB on PostgreSQL 17, local only
+Prices are time-series data; TimescaleDB stores them in one-day chunks. The image
+is pinned to PostgreSQL 17 (PostgreSQL 18 images moved the data directory). The
+container is bound to 127.0.0.1 only. The plain TimescaleDB image does not include
+pgvector; we will choose how to add it when we reach document search.
+
+## Money in the database is `numeric`, accessed through asyncpg
+`numeric` is exact and maps to Python's `Decimal`, so no price or amount ever
+passes through a float.
+
+## A price record is identified by (exchange, symbol, exchange_time, price)
+PriceTick has no trade ID, so this is the duplicate rule for the prices table.
+Trade-off: two different trades in the same millisecond at the same price become
+one row. That is fine for a price history, because we do not store volume. The
+trades table will use the exchange's own trade_id, where exactness matters.
+
+## Migrations are plain numbered SQL files
+Each runs in its own transaction and is recorded with a checksum. Editing an
+applied migration is refused: add a new one instead. An advisory lock stops two
+runners from migrating at the same time.
+
+## Tests run on their own database
+`deskpilot_test` is created fresh each test run, so real data is never touched.
+If PostgreSQL is not running, database tests are skipped with a clear message.
+(When we add CI, we will make them required instead.)
+
+
+## The recorder saves in batches
+A batch is saved at 500 ticks or 1 second after its first tick, whichever comes
+first. One database round trip per tick would be far slower.
+
+## Feeds never wait for the database
+`Recorder.on_tick` only puts the tick in a buffer. If the buffer is full (50,000),
+the newest tick is dropped and counted (`dropped_count`), and a warning is logged.
+Trade-off: a database outage longer than the buffer loses ticks, but a slow
+database can never stall a feed and get us disconnected.
+
+## Database trouble is retried, bugs are not
+Connection errors are retried forever with backoff, keeping the same batch.
+Anything else crashes loudly, like in the feeds.
+
+## Retrying and re-saving is safe because saving is duplicate-safe
+If shutdown interrupts a save, we cannot know whether it finished. The batch is
+kept until a save is confirmed and re-saved by `drain()`; copies are ignored.
+
+## Shutdown drains the buffer
+After `run()` is cancelled, `drain()` saves everything still waiting.
+
+## Duplicates are counted
+`duplicate_count` is not a sign of trouble: two trades in the same millisecond at
+the same price share one record (see the prices-table decision).
+
+## The recorder is called directly for now
+Redis Streams will later sit between ingestion and storage. The recorder's
+`on_tick` interface should not need to change.
