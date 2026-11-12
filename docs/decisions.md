@@ -190,3 +190,28 @@ A trade we could not read is a trade we could not verify. Every bad line is repo
 ## Fault injection proves the Checker
 20 mistakes covering every break kind are injected into a generated day of trades. The
 test requires exactly those 20 breaks, with no misses and no false alarms, on 25 seeds.
+
+
+## The model talks, our code calculates
+The assistant never computes money values. Tools call the tested calculator and return
+finished numbers as text, so the model can only copy them.
+
+## Plain OpenAI SDK against Groq, no agent framework
+The tool-calling loop is about 40 lines and fully visible. Switching provider means
+changing three settings.
+
+## Tool problems are data, bugs are logged
+Expected problems (bad dates, missing files, an inconsistent ledger) go back to the model
+as {"error": ...} so it can explain or retry. Unexpected exceptions are logged with the
+full traceback and reach the model only as a generic "do not guess" message.
+
+## The assistant is read-only
+There are no write tools. Any future write action must go through human approval.
+
+## Model-supplied file names are untrusted
+Only plain .csv names inside the statements folder are accepted; anything that resolves
+outside it (folders, "..", symlinks) is refused.
+
+## Tools read data through a small interface
+AgentData has a PostgreSQL implementation and an in-memory one. Tests and evaluations use
+the in-memory one, so they are repeatable and need no database.
