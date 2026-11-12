@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     environment: str = "dev"
     log_level: str = "INFO"
 
-    database_url: str = "postgresql://deskpilot:deskpilot@localhost:5432/deskpilot"
+    database_url: str = "postgresql://postgres:deskpilot@localhost:5432/postgres"
     redis_url: str = "redis://localhost:6379/0"
 
     llm_base_url: str = "https://api.groq.com/openai/v1"
