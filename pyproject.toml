@@ -9,11 +9,16 @@ authors = [
 requires-python = ">=3.12"
 dependencies = [
     "asyncpg>=0.32.0",
+    "beautifulsoup4>=4.15.0",
+    "fastapi>=0.162.5",
     "fastembed>=0.9.1",
+    "httpx>=0.28.1",
     "openai>=3.49.0",
+    "playwright>=1.65.1",
     "pydantic-settings>=2.16.2",
     "pypdf>=7.0.1",
     "pyyaml>=6.0.3",
+    "uvicorn[standard]>=0.54.0",
     "websockets>=17.4",
 ]
 
@@ -43,3 +48,6 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["E501"]

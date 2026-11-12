@@ -22,3 +22,6 @@ db-reset:
 
 migrate:
 	uv run python -m deskpilot.storage.migrate
+
+api:
+	uv run uvicorn deskpilot.api.app:create_app --factory --host 127.0.0.1 --port 8000
