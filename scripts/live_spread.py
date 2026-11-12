@@ -9,6 +9,7 @@ import os
 import sys
 from contextlib import suppress
 from datetime import UTC, datetime
+
 from deskpilot.analytics import PriceBoard
 from deskpilot.ingestion import BinanceFeed, KrakenFeed, run_feeds
 from deskpilot.ingestion.binance import BINANCE_WS_URL

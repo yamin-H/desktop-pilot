@@ -139,7 +139,5 @@ class TradeRepository:
         self, *, exchange: Exchange | None = None, symbol: str | None = None
     ) -> list[Trade]:
         """All trades, oldest first, optionally for one exchange and/or one symbol."""
-        rows = await self._pool.fetch(
-            _LIST, exchange.value if exchange else None, symbol
-        )
+        rows = await self._pool.fetch(_LIST, exchange.value if exchange else None, symbol)
         return [_to_trade(row) for row in rows]

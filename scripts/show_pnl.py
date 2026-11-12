@@ -72,7 +72,9 @@ async def main(args: list[str]) -> int:
                 sources[symbol] = "none available"
             else:
                 prices[symbol] = tick.price
-                sources[symbol] = f"recorded from binance at {tick.exchange_time:%Y-%m-%d %H:%M} UTC"
+                sources[symbol] = (
+                    f"recorded from binance at {tick.exchange_time:%Y-%m-%d %H:%M} UTC"
+                )
 
         values = value_positions(positions, prices)
 

@@ -170,3 +170,23 @@ stops is better than one that is quietly wrong.
 
 ## Unknown is not zero
 Unrealized profit without a current price is None. Totals say which symbols lack a price.
+
+
+## The Checker only reports; a person decides which side is right
+Automatic fixing could hide the real cause of a mismatch.
+
+## One exchange and an explicit period per reconciliation
+Otherwise other exchanges' trades, or trades from other days, would look "missing".
+Trades inside the period are checked; ours outside it are counted but not blamed; but a
+trade the statement lists must always exist in the ledger.
+
+## Money matches exactly, time has a tolerance
+Quantity, price and fee differences are exactly what we want to catch. Only clock drift
+(default 1 second) is tolerated.
+
+## An unreadable statement is refused as a whole
+A trade we could not read is a trade we could not verify. Every bad line is reported.
+
+## Fault injection proves the Checker
+20 mistakes covering every break kind are injected into a generated day of trades. The
+test requires exactly those 20 breaks, with no misses and no false alarms, on 25 seeds.
