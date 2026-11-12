@@ -11,7 +11,7 @@ format:
 	uv run ruff check --fix .
 
 db-up:
-	docker compose up -d --wait db
+	docker compose up -d --build --wait db
 
 db-down:
 	docker compose down

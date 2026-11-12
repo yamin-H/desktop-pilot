@@ -125,12 +125,22 @@ async def test_a_missing_price_makes_unrealized_profit_unknown_not_zero(
 async def test_a_closed_position_needs_no_price(run_tool):
     trades = [
         Trade(
-            exchange="binance", trade_id="A", symbol="BTC/USDT", side="buy",
-            quantity="1", price="100", executed_at="2026-11-10T10:00:00Z",
+            exchange="binance",
+            trade_id="A",
+            symbol="BTC/USDT",
+            side="buy",
+            quantity="1",
+            price="100",
+            executed_at="2026-11-10T10:00:00Z",
         ),
         Trade(
-            exchange="binance", trade_id="B", symbol="BTC/USDT", side="sell",
-            quantity="1", price="110", executed_at="2026-11-10T11:00:00Z",
+            exchange="binance",
+            trade_id="B",
+            symbol="BTC/USDT",
+            side="sell",
+            quantity="1",
+            price="110",
+            executed_at="2026-11-10T11:00:00Z",
         ),
     ]
     result = await run_tool("get_pnl", data=StaticData(trades))
@@ -142,8 +152,13 @@ async def test_a_closed_position_needs_no_price(run_tool):
 async def test_an_inconsistent_ledger_is_reported_not_guessed(run_tool):
     trades = [
         Trade(
-            exchange="binance", trade_id="S", symbol="BTC/USDT", side="sell",
-            quantity="1", price="100", executed_at="2026-11-10T10:00:00Z",
+            exchange="binance",
+            trade_id="S",
+            symbol="BTC/USDT",
+            side="sell",
+            quantity="1",
+            price="100",
+            executed_at="2026-11-10T10:00:00Z",
         )
     ]
     result = await run_tool("get_pnl", data=StaticData(trades))
@@ -199,13 +214,23 @@ async def test_bad_periods_are_errors_the_model_can_read(run_tool, arguments, me
 async def test_many_sales_are_cut_off_and_marked_as_cut_off(run_tool):
     trades = [
         Trade(
-            exchange="binance", trade_id="BUY", symbol="BTC/USDT", side="buy",
-            quantity="100", price="100", executed_at="2026-11-10T00:00:00Z",
+            exchange="binance",
+            trade_id="BUY",
+            symbol="BTC/USDT",
+            side="buy",
+            quantity="100",
+            price="100",
+            executed_at="2026-11-10T00:00:00Z",
         )
     ] + [
         Trade(
-            exchange="binance", trade_id=f"S-{i:03d}", symbol="BTC/USDT", side="sell",
-            quantity="1", price="101", executed_at=f"2026-11-10T01:{i // 60:02d}:{i % 60:02d}Z",
+            exchange="binance",
+            trade_id=f"S-{i:03d}",
+            symbol="BTC/USDT",
+            side="sell",
+            quantity="1",
+            price="101",
+            executed_at=f"2026-11-10T01:{i // 60:02d}:{i % 60:02d}Z",
         )
         for i in range(60)
     ]

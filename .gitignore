@@ -10,3 +10,5 @@ __pycache__/
 # big local data
 data/recorded_feeds/*
 !data/recorded_feeds/.gitkeep
+# evaluation transcripts
+eval_runs/

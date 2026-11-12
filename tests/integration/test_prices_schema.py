@@ -8,6 +8,7 @@ async def test_all_migrations_are_applied(pool):
         "001_extensions.sql",
         "002_prices.sql",
         "003_trades.sql",
+        "004_documents.sql",
     ]
 
 

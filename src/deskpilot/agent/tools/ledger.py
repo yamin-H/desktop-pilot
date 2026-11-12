@@ -245,7 +245,8 @@ LEDGER_TOOLS = [
         "get_pnl",
         "Overall profit and loss: realized (locked in by sales, all time) plus unrealized "
         "(on paper, valued at the latest recorded price), per position and totalled per "
-        "currency. Use for 'how are we doing', total profit or unrealized profit.",
+        "currency. Use for 'how are we doing', total profit, unrealized profit or the "
+        "market value of a position.",
         PositionArgs,
         get_pnl,
     ),
@@ -265,7 +266,8 @@ LEDGER_TOOLS = [
     Tool(
         "list_trades",
         "The most recent trades in our ledger (newest first), optionally for one exchange "
-        "and/or coin pair.",
+        "and/or coin pair."
+        " Also gives the total number of matching trades, so use it for 'how many trades'.",
         ListTradesArgs,
         list_trades,
     ),

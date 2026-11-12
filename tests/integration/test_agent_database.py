@@ -12,12 +12,22 @@ async def test_the_tools_give_the_same_answers_from_the_real_database(pool):
     await TradeRepository(pool).save_trades(
         [
             Trade(
-                exchange="binance", trade_id="X-1", symbol="BTC/USDT", side="buy",
-                quantity="2", price="100", executed_at="2026-11-10T10:00:00Z",
+                exchange="binance",
+                trade_id="X-1",
+                symbol="BTC/USDT",
+                side="buy",
+                quantity="2",
+                price="100",
+                executed_at="2026-11-10T10:00:00Z",
             ),
             Trade(
-                exchange="binance", trade_id="X-2", symbol="BTC/USDT", side="sell",
-                quantity="1", price="120", executed_at="2026-11-10T11:00:00Z",
+                exchange="binance",
+                trade_id="X-2",
+                symbol="BTC/USDT",
+                side="sell",
+                quantity="1",
+                price="120",
+                executed_at="2026-11-10T11:00:00Z",
             ),
         ]
     )

@@ -49,12 +49,14 @@ def _simplify(node: Any) -> Any:
         options = [option for option in node["anyOf"] if option.get("type") != "null"]
         if len(options) == 1:
             rest = {key: value for key, value in node.items() if key != "anyOf"}
-            return _simplify({**rest, **options[0]})
-    return {
-        key: _simplify(value)
-        for key, value in node.items()
-        if key != "title"
-    }
+            simple = _simplify({**rest, **options[0]})
+            if len(options) < len(node["anyOf"]):
+                # Some models send null for "not given". Say that is allowed.
+                simple["type"] = [simple["type"], "null"]
+                if "enum" in simple:
+                    simple["enum"] = [*simple["enum"], None]
+            return simple
+    return {key: _simplify(value) for key, value in node.items() if key != "title"}
 
 
 @dataclass(frozen=True)

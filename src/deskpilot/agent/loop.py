@@ -107,7 +107,9 @@ class Agent:
                     call.function.name, call.function.arguments, self._context
                 )
                 records.append(ToolCallRecord(call.function.name, call.function.arguments, result))
-                logger.info("tool %s -> %s", call.function.name, "error" if "error" in result else "ok")
+                logger.info(
+                    "tool %s -> %s", call.function.name, "error" if "error" in result else "ok"
+                )
                 messages.append(
                     {
                         "role": "tool",

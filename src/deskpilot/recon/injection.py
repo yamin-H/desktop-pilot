@@ -105,9 +105,7 @@ def build_scenario(seed: int = 7, trade_count: int = 60) -> Scenario:
     # Each mistake goes on a different trade, so every break can be told apart.
     targets = iter(rng.sample(range(trade_count), total))
     plan_for_index = {
-        next(targets): (mutation, kind)
-        for mutation, kind, number in PLAN
-        for _ in range(number)
+        next(targets): (mutation, kind) for mutation, kind, number in PLAN for _ in range(number)
     }
 
     ledger: list[Trade] = []

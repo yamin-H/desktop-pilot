@@ -1,6 +1,9 @@
 services:
   db:
-    image: timescale/timescaledb:latest-pg17
+    build:
+      context: ./infra
+      dockerfile: db.Dockerfile
+    image: deskpilot-db:pg17
     environment:
       POSTGRES_USER: deskpilot
       POSTGRES_PASSWORD: deskpilot

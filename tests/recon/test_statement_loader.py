@@ -45,7 +45,10 @@ def test_a_blank_fee_and_currency_mean_no_fee():
 
 
 def test_the_fee_currency_column_is_optional():
-    text = "trade_id,symbol,side,quantity,price,fee,executed_at\nT-1,BTC/USDT,buy,1,100,0,2026-01-01T12:00:00Z\n"
+    text = (
+        "trade_id,symbol,side,quantity,price,fee,executed_at\n"
+        "T-1,BTC/USDT,buy,1,100,0,2026-01-01T12:00:00Z\n"
+    )
     [trade] = parse_statement(text, Exchange.BINANCE)
     assert trade.fee_asset is None
 

@@ -138,7 +138,9 @@ async def test_the_model_can_fix_its_own_mistake_after_an_error(agent_context):
     client = FakeClient(
         [
             use_tools(call("1", "get_realized_pnl", '{"start": "yesterday", "end": "today"}')),
-            use_tools(call("2", "get_realized_pnl", '{"start": "2026-11-10", "end": "2026-11-11"}')),
+            use_tools(
+                call("2", "get_realized_pnl", '{"start": "2026-11-10", "end": "2026-11-11"}')
+            ),
             say("Realized profit on 2026-11-10 was 1005.23 USDT."),
         ]
     )

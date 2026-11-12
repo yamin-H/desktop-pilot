@@ -6,10 +6,10 @@ from deskpilot.recon.injection import PLAN, build_scenario
 from deskpilot.recon.matcher import reconcile
 
 
-def check(scenario, ledger=None):
+def check(scenario, ledger=None, statement=None):
     return reconcile(
         scenario.ledger if ledger is None else ledger,
-        scenario.statement,
+        scenario.statement if statement is None else statement,
         exchange=scenario.exchange,
         start=scenario.start,
         end=scenario.end,
@@ -55,7 +55,7 @@ def test_the_untouched_trades_come_out_clean():
 def test_a_ledger_identical_to_the_statement_gives_a_clean_report():
     scenario = build_scenario()
     unique_statement = list({trade.trade_id: trade for trade in scenario.statement}.values())
-    assert check(scenario, ledger=unique_statement).is_clean
+    assert check(scenario, ledger=unique_statement, statement=unique_statement).is_clean
 
 
 def test_the_same_seed_gives_the_same_scenario():

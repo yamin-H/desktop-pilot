@@ -71,8 +71,12 @@ async def test_a_long_list_of_breaks_is_cut_off_and_marked(run_tool, statements)
     (statements / "empty.csv").write_text(HEADER, encoding="utf-8")
     trades = [
         Trade(
-            exchange="binance", trade_id=f"T-{i:03d}", symbol="BTC/USDT", side="buy",
-            quantity="1", price="100",
+            exchange="binance",
+            trade_id=f"T-{i:03d}",
+            symbol="BTC/USDT",
+            side="buy",
+            quantity="1",
+            price="100",
             executed_at=f"2026-11-10T{i // 60:02d}:{i % 60:02d}:00Z",
         )
         for i in range(60)
@@ -91,7 +95,15 @@ async def test_a_long_list_of_breaks_is_cut_off_and_marked(run_tool, statements)
 
 @pytest.mark.parametrize(
     "name",
-    ["../outside.csv", "sub/clean.csv", "..\\clean.csv", "clean.txt", "", ".hidden.csv", "/etc/passwd"],
+    [
+        "../outside.csv",
+        "sub/clean.csv",
+        "..\\clean.csv",
+        "clean.txt",
+        "",
+        ".hidden.csv",
+        "/etc/passwd",
+    ],
 )
 async def test_file_names_that_could_escape_the_folder_are_refused(
     run_tool, statements, tmp_path, name
