@@ -153,3 +153,20 @@ though the Trade model already validates them. The database is the last defence.
 Sample trades have fixed `PAPER-` IDs and fixed times, so seeding is repeatable.
 Fees use mixed currencies on purpose (BTC and USDT), because the profit
 calculation must handle them.
+
+
+## Profit is calculated by pure functions, not in the database
+`calculate_positions` takes trades and returns positions. No database, no clock.
+That makes it easy to test with hand-calculated numbers, and the AI assistant will
+call it as a tool instead of ever doing arithmetic itself.
+
+## Average cost, not FIFO
+One simple number per position, matching the "average buy price" exchanges show.
+FIFO can be added later if a use case needs it. Full rules: docs/04-accounting-rules.md.
+
+## The calculator refuses instead of guessing
+Duplicates, oversold positions and unplaceable fees raise errors. A report that
+stops is better than one that is quietly wrong.
+
+## Unknown is not zero
+Unrealized profit without a current price is None. Totals say which symbols lack a price.
