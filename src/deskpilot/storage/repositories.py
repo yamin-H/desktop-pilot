@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from datetime import timedelta
 
 import asyncpg
 
@@ -11,6 +12,13 @@ SELECT * FROM unnest(
     $1::text[], $2::text[], $3::numeric[], $4::timestamptz[], $5::timestamptz[]
 )
 ON CONFLICT (exchange, symbol, exchange_time, price) DO NOTHING
+"""
+
+_LATEST_ALL = """
+SELECT DISTINCT ON (exchange, symbol) exchange, symbol, price, exchange_time, received_time
+FROM prices
+WHERE exchange_time > now() - $1::interval
+ORDER BY exchange, symbol, exchange_time DESC, received_time DESC
 """
 
 _LATEST_TICK = """
@@ -46,3 +54,8 @@ class PriceRepository:
         """The most recent tick (by exchange time) for one exchange and symbol."""
         row = await self._pool.fetchrow(_LATEST_TICK, exchange.value, symbol)
         return PriceTick(**dict(row)) if row else None
+
+    async def latest_all(self, within: timedelta) -> list[PriceTick]:
+        """The newest tick for every exchange and symbol seen within the last `within`."""
+        rows = await self._pool.fetch(_LATEST_ALL, within)
+        return [PriceTick(**dict(row)) for row in rows]

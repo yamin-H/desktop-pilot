@@ -74,3 +74,14 @@ class PriceBoard:
             ordered = sorted(ticks, key=lambda t: (t.price, t.exchange.value))
             result.append(Spread(symbol=symbol, high=ordered[-1], low=ordered[0]))
         return result
+
+    @property
+    def max_age(self) -> float:
+        return self._max_age
+
+    def now(self) -> datetime:
+        return self._clock()
+
+    def ticks(self) -> list[PriceTick]:
+        """Every stored tick (fresh or not): one per exchange and coin pair."""
+        return list(self._latest.values())

@@ -37,6 +37,18 @@ async def test_latest_returns_the_last_tick():
     assert board.latest(Exchange.BINANCE, "BTC/USDT") == second
 
 
+async def test_the_board_exposes_every_stored_tick_even_stale_ones():
+    board = make_board(max_age=30)
+    await board.on_tick(tick(Exchange.BINANCE, "100"))
+    await board.on_tick(tick(Exchange.KRAKEN, "99", age=100))
+    assert {t.exchange for t in board.ticks()} == {Exchange.BINANCE, Exchange.KRAKEN}
+
+
+def test_the_board_exposes_its_settings():
+    board = PriceBoard(max_age=12, clock=lambda: NOW)
+    assert (board.max_age, board.now()) == (12, NOW)
+
+
 async def test_an_older_tick_does_not_replace_a_newer_one():
     board = make_board()
     newer = tick(Exchange.BINANCE, "101", at=5)

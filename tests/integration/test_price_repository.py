@@ -18,6 +18,31 @@ def tick(price="100", *, exchange=Exchange.BINANCE, symbol="BTC/USDT", at=0):
     )
 
 
+async def test_latest_all_gives_the_newest_tick_per_exchange_and_symbol_within_the_window(pool):
+    repo = PriceRepository(pool)
+    now = datetime.now(UTC)
+
+    def tk(exchange, symbol, price, seconds_ago):
+        when = now - timedelta(seconds=seconds_ago)
+        return PriceTick(
+            exchange=exchange, symbol=symbol, price=price, exchange_time=when, received_time=when
+        )
+
+    await repo.save_ticks(
+        [
+            tk("binance", "BTC/USDT", "100", 30),
+            tk("binance", "BTC/USDT", "101", 10),
+            tk("kraken", "BTC/USDT", "99", 20),
+            tk("binance", "ETH/USDT", "3000", 3600),  # outside the window
+        ]
+    )
+    found = await repo.latest_all(timedelta(minutes=5))
+    assert [(t.exchange.value, t.symbol, t.price) for t in found] == [
+        ("binance", "BTC/USDT", Decimal("101")),
+        ("kraken", "BTC/USDT", Decimal("99")),
+    ]
+
+
 async def count(pool) -> int:
     return await pool.fetchval("SELECT count(*) FROM prices")
 
