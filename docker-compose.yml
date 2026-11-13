@@ -9,11 +9,24 @@ services:
     volumes:
       - pg-data:/home/postgres/pgdata/data
     healthcheck:
-      # -h 127.0.0.1 waits for the real server, not the temporary one used during first start
       test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 3s
       retries: 20
 
 volumes:
   pg-data:
+  redis-data:

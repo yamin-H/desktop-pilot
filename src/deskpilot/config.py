@@ -1,4 +1,5 @@
 from functools import lru_cache
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -18,6 +19,9 @@ class Settings(BaseSettings):
     slack_webhook_url: str = ""
     api_token: str = ""
     api_enable_chat: bool = False
+    use_redis: bool = False
+    tick_stream: str = "ticks"
+    tick_stream_maxlen: int = 200_000
 
 
 @lru_cache
