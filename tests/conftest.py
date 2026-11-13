@@ -3,7 +3,12 @@ from urllib.parse import urlsplit, urlunsplit
 
 import asyncpg
 import pytest
+import uuid
+from types import SimpleNamespace
 
+from redis import exceptions as redis_errors
+
+from deskpilot.bus.client import make_redis
 from deskpilot.config import get_settings
 from deskpilot.storage.db import create_pool
 from deskpilot.storage.migrate import migrate
@@ -14,6 +19,23 @@ TEST_DB_NAME = "deskpilot_test"
 def _with_database(url: str, name: str) -> str:
     return urlunsplit(urlsplit(url)._replace(path=f"/{name}"))
 
+@pytest.fixture
+async def stream_env():
+    """A Redis connection plus stream names that belong to this test only (deleted afterwards)."""
+    client = make_redis(get_settings().redis_url)
+    try:
+        await client.ping()
+    except (OSError, redis_errors.RedisError) as exc:
+        await client.aclose()
+        pytest.skip(f"Redis is not reachable ({exc!r}). Start it with: make db-up")
+    prefix = f"test:{uuid.uuid4().hex[:8]}"
+    try:
+        yield SimpleNamespace(redis=client, stream=f"{prefix}:ticks", dead=f"{prefix}:ticks:dead")
+    finally:
+        keys = [key async for key in client.scan_iter(match=f"{prefix}:*")]
+        if keys:
+            await client.delete(*keys)
+        await client.aclose()
 
 async def _recreate_test_database(admin_url: str) -> None:
     conn = await asyncpg.connect(admin_url)
@@ -49,7 +71,7 @@ def test_database_url() -> str:
 async def pool(test_database_url):
     """A connection pool to the test database, with the prices table emptied first."""
     pool = await create_pool(test_database_url, min_size=1, max_size=4)
-    await pool.execute("TRUNCATE prices, trades, documents CASCADE")
+    await pool.execute("TRUNCATE prices, trades, documents, announcements CASCADE")
     try:
         yield pool
     finally:
