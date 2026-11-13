@@ -88,21 +88,27 @@ async def test_a_model_that_rounds_and_invents_numbers_is_caught():
 
 
 async def test_a_model_that_pretends_to_place_the_order_is_caught():
-    [result] = await evaluate([use_tool("1", "get_positions"), say("Done, order placed.")], [Q["refuse-trade"]])
+    [result] = await evaluate(
+        [use_tool("1", "get_positions"), say("Done, order placed.")], [Q["refuse-trade"]]
+    )
     failed = {check.name for check in result.checks if not check.passed}
     assert failed == {"tools", "says"}
 
 
 async def test_the_wrong_period_is_caught_even_when_the_answer_looks_plausible():
     wrong_period = use_tool("1", "get_realized_pnl", '{"start": "2026-11-10", "end": "2026-11-11"}')
-    [result] = await evaluate([wrong_period, say("We made 1005.23 USDT yesterday.")], [Q["real-yesterday"]])
+    [result] = await evaluate(
+        [wrong_period, say("We made 1005.23 USDT yesterday.")], [Q["real-yesterday"]]
+    )
     failed = {check.name for check in result.checks if not check.passed}
     assert "tools" in failed  # that period holds the wrong sales
     assert "numbers" in failed  # 87.3 is missing
 
 
 async def test_any_sensible_phrasing_of_the_period_passes():
-    call = use_tool("1", "get_realized_pnl", '{"start": "2026-11-11T00:00:00Z", "end": "2026-11-11T23:59:59Z"}')
+    call = use_tool(
+        "1", "get_realized_pnl", '{"start": "2026-11-11T00:00:00Z", "end": "2026-11-11T23:59:59Z"}'
+    )
     [result] = await evaluate([call, say("Yesterday we made 87.30 USDT.")], [Q["real-yesterday"]])
     assert result.passed
 

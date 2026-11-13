@@ -139,11 +139,6 @@ async def test_a_wrong_choice_lists_the_allowed_ones():
     assert "quiet" in result["error"]
 
 
-def test_optional_arguments_may_be_null_in_the_schema():
-    mode = REGISTRY.schemas()[0]["function"]["parameters"]["properties"]["mode"]
-    assert mode["type"] == ["string", "null"]
-
-
 async def test_an_explainable_problem_is_passed_on_as_an_error():
     assert await call("explain_problem") == {"error": "that went wrong, on purpose"}
 

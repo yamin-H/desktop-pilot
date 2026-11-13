@@ -1,5 +1,7 @@
 from collections.abc import Sequence
+
 from redis.asyncio import Redis
+
 from deskpilot.bus.codec import encode_tick
 from deskpilot.models import PriceTick
 

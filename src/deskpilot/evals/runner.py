@@ -90,16 +90,26 @@ async def run_evaluation(
                 answer = await agent.ask(question.question)
             except expected_errors as error:
                 result = RunResult(
-                    question, attempt, None, (), (),
-                    f"{type(error).__name__}: {error}", time.perf_counter() - started, 0,
+                    question,
+                    attempt,
+                    None,
+                    (),
+                    (),
+                    f"{type(error).__name__}: {error}",
+                    time.perf_counter() - started,
+                    0,
                 )
             else:
-                checks = score_answer(
-                    question, answer.text, answer.tool_calls, extra_numbers=extra
-                )
+                checks = score_answer(question, answer.text, answer.tool_calls, extra_numbers=extra)
                 result = RunResult(
-                    question, attempt, answer.text, answer.tool_calls, tuple(checks),
-                    None, time.perf_counter() - started, answer.steps,
+                    question,
+                    attempt,
+                    answer.text,
+                    answer.tool_calls,
+                    tuple(checks),
+                    None,
+                    time.perf_counter() - started,
+                    answer.steps,
                 )
             results.append(result)
             if on_result is not None:
@@ -144,7 +154,11 @@ def format_report(results: Sequence[RunResult], *, model: str = "") -> str:
     lines = [f"{'question':<{width}}{'result':<8}notes"]
     for name, runs in grouped.items():
         passed = sum(run.passed for run in runs)
-        label = ("PASS" if passed == len(runs) else "FAIL") if len(runs) == 1 else f"{passed}/{len(runs)}"
+        label = (
+            ("PASS" if passed == len(runs) else "FAIL")
+            if len(runs) == 1
+            else f"{passed}/{len(runs)}"
+        )
         failing = next((run for run in runs if not run.passed), None)
         notes = _problems(failing) if failing else ""
         if len(notes) > 150:
@@ -167,7 +181,9 @@ def format_report(results: Sequence[RunResult], *, model: str = "") -> str:
 def format_markdown(results: Sequence[RunResult], *, model: str) -> str:
     """A small table you can paste into the README."""
     summary = summarize(results)
-    failed = [name for name, runs in _by_question(results).items() if not all(r.passed for r in runs)]
+    failed = [
+        name for name, runs in _by_question(results).items() if not all(r.passed for r in runs)
+    ]
     lines = [
         f"**Model:** `{model}`  ",
         f"**Runs:** {summary.runs}, fully passed: {summary.passed}, no answer: {summary.errors}",

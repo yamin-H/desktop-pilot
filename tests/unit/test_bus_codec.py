@@ -7,7 +7,9 @@ from deskpilot.bus.codec import decode_tick, encode_tick
 from deskpilot.models import PriceTick
 
 TICK = PriceTick(
-    exchange="binance", symbol="BTC/USDT", price="60000.10",
+    exchange="binance",
+    symbol="BTC/USDT",
+    price="60000.10",
     exchange_time=datetime(2026, 11, 12, 10, 0, 1, 123000, tzinfo=UTC),
     received_time=datetime(2026, 11, 12, 10, 0, 1, 130000, tzinfo=UTC),
 )
@@ -21,8 +23,9 @@ def test_the_fields_are_plain_text_and_prices_keep_every_digit():
     fields = encode_tick(TICK)
     assert all(isinstance(value, str) for value in fields.values())
     assert fields["price"] == "60000.10"
-    tiny = PriceTick(exchange="kraken", symbol="ETH/USDT", price="0.00000001",
-                     exchange_time=TICK.exchange_time)
+    tiny = PriceTick(
+        exchange="kraken", symbol="ETH/USDT", price="0.00000001", exchange_time=TICK.exchange_time
+    )
     assert encode_tick(tiny)["price"] == "0.00000001"  # not 1E-8
     assert decode_tick(encode_tick(tiny)).price == Decimal("0.00000001")
 

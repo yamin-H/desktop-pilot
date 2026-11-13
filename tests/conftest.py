@@ -1,11 +1,10 @@
 import asyncio
+import uuid
+from types import SimpleNamespace
 from urllib.parse import urlsplit, urlunsplit
 
 import asyncpg
 import pytest
-import uuid
-from types import SimpleNamespace
-
 from redis import exceptions as redis_errors
 
 from deskpilot.bus.client import make_redis
@@ -18,6 +17,7 @@ TEST_DB_NAME = "deskpilot_test"
 
 def _with_database(url: str, name: str) -> str:
     return urlunsplit(urlsplit(url)._replace(path=f"/{name}"))
+
 
 @pytest.fixture
 async def stream_env():
@@ -36,6 +36,7 @@ async def stream_env():
         if keys:
             await client.delete(*keys)
         await client.aclose()
+
 
 async def _recreate_test_database(admin_url: str) -> None:
     conn = await asyncpg.connect(admin_url)

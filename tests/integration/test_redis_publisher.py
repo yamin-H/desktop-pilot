@@ -10,7 +10,9 @@ T0 = datetime(2026, 11, 12, 10, 0, tzinfo=UTC)
 
 def tick(n):
     return PriceTick(
-        exchange="binance", symbol="BTC/USDT", price=str(100 + n),
+        exchange="binance",
+        symbol="BTC/USDT",
+        price=str(100 + n),
         exchange_time=T0 + timedelta(seconds=n),
         received_time=T0 + timedelta(seconds=n, milliseconds=5),
     )
@@ -30,7 +32,9 @@ async def test_a_published_tick_is_a_stream_entry_with_exact_text_fields(stream_
 
 
 async def test_entries_keep_the_order_they_were_published_in(stream_env):
-    await StreamTickSaver(stream_env.redis, stream_env.stream).save_ticks([tick(n) for n in range(5)])
+    await StreamTickSaver(stream_env.redis, stream_env.stream).save_ticks(
+        [tick(n) for n in range(5)]
+    )
     entries = await stream_env.redis.xrange(stream_env.stream)
     assert [fields["price"] for _, fields in entries] == ["100", "101", "102", "103", "104"]
 

@@ -103,7 +103,9 @@ def test_arguments_must_match_but_extra_ones_are_fine_and_case_is_ignored():
     spec = CallSpec(tool="get_latest_price", args={"exchange": "binance", "symbol": "BTC/USDT"})
     sent = {"exchange": "Binance", "symbol": "btc/usdt", "extra": 1}
     assert call_matches(spec, record("get_latest_price", sent))
-    assert not call_matches(spec, record("get_latest_price", {"exchange": "kraken", "symbol": "BTC/USDT"}))
+    assert not call_matches(
+        spec, record("get_latest_price", {"exchange": "kraken", "symbol": "BTC/USDT"})
+    )
     assert not call_matches(spec, record("get_latest_price", {"exchange": "binance"}))
 
 
@@ -117,7 +119,9 @@ def test_a_failed_call_only_matches_when_an_error_is_expected():
     failed = record("run_reconciliation", result={"error": "no such file"})
     assert not call_matches(CallSpec(tool="run_reconciliation"), failed)
     assert call_matches(CallSpec(tool="run_reconciliation", error=True), failed)
-    assert not call_matches(CallSpec(tool="run_reconciliation", error=True), record("run_reconciliation"))
+    assert not call_matches(
+        CallSpec(tool="run_reconciliation", error=True), record("run_reconciliation")
+    )
 
 
 def test_a_period_is_judged_by_the_sales_it_contains():

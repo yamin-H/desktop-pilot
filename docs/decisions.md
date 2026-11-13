@@ -251,3 +251,23 @@ One implementation of every number. The API maps tool errors to 422 and bugs to 
 ## Chat is opt-in and guarded
 Off by default, with a rate limit, a concurrency cap and a length limit, because every
 question costs money and can be abused.
+
+## Redis Streams with consumer groups, acknowledged after the database save
+The stream decouples ingestion from storage. At-least-once delivery plus duplicate-safe saves
+gives exactly-once rows without distributed transactions.
+
+## Streams, not Kafka
+One machine, a few hundred messages per second, and Redis is already easy to run. Kafka would
+add operational weight without a benefit at this scale. At roughly 100x the volume, or with many
+independent teams consuming, Kafka would be worth revisiting.
+
+## The API follows the stream without a consumer group
+Every API instance needs every tick; a group would split them. History seeding fills the board
+at once and makes the API independent of the database for live prices.
+
+## Publishing reuses the Recorder
+Buffer, drop-newest counter, retry and drain were already written and tested; only the "save"
+changed. Feeds still never wait for the network.
+
+## Dead-letter stream for unreadable entries
+A bad entry is kept for inspection and acknowledged, so it cannot block everything behind it.

@@ -69,6 +69,7 @@ async def wait_until(predicate, timeout=2.0):
         while not predicate():
             await asyncio.sleep(0.001)
 
+
 class CustomError(Exception):
     pass
 
@@ -88,6 +89,7 @@ async def test_errors_outside_a_custom_list_are_still_not_swallowed():
     await recorder.on_tick(tick(0))
     with pytest.raises(ConnectionRefusedError):
         await asyncio.wait_for(recorder.run(), timeout=2)
+
 
 async def test_a_full_batch_is_saved_without_waiting_for_the_interval():
     repo = FakeRepo()
