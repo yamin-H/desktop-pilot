@@ -40,6 +40,7 @@ class Recorder:
         flush_interval: float = 1.0,
         max_buffer: int = 50_000,
         backoff: BackoffPolicy | None = None,
+        retry_on: tuple[type[BaseException], ...] | None = None,
     ) -> None:
         if batch_size < 1:
             raise ValueError("batch_size must be at least 1")
@@ -61,6 +62,9 @@ class Recorder:
         self.duplicate_count = 0  # ticks the database already had
         self.dropped_count = 0  # ticks thrown away because the tray was full
         self.retry_count = 0  # failed attempts to reach the database
+
+        if retry_on is not None:
+            self.retry_on = retry_on  # replaces the class default for this instance
 
     @property
     def pending(self) -> int:

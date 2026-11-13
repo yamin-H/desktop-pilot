@@ -69,6 +69,25 @@ async def wait_until(predicate, timeout=2.0):
         while not predicate():
             await asyncio.sleep(0.001)
 
+class CustomError(Exception):
+    pass
+
+
+async def test_the_errors_to_retry_can_be_chosen_per_recorder():
+    repo = FakeRepo(fail=[CustomError(), CustomError()])
+    recorder = Recorder(repo, flush_interval=0.01, backoff=FAST, retry_on=(CustomError,))
+    async with running(recorder):
+        await recorder.on_tick(tick(0))
+        await wait_until(lambda: len(repo.batches) == 1)
+    assert recorder.retry_count == 2
+
+
+async def test_errors_outside_a_custom_list_are_still_not_swallowed():
+    repo = FakeRepo(fail=[ConnectionRefusedError()])  # an OSError, but not in this list
+    recorder = Recorder(repo, flush_interval=0.01, backoff=FAST, retry_on=(CustomError,))
+    await recorder.on_tick(tick(0))
+    with pytest.raises(ConnectionRefusedError):
+        await asyncio.wait_for(recorder.run(), timeout=2)
 
 async def test_a_full_batch_is_saved_without_waiting_for_the_interval():
     repo = FakeRepo()
