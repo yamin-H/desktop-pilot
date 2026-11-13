@@ -215,3 +215,39 @@ outside it (folders, "..", symlinks) is refused.
 ## Tools read data through a small interface
 AgentData has a PostgreSQL implementation and an in-memory one. Tests and evaluations use
 the in-memory one, so they are repeatable and need no database.
+
+
+## The clerk reads pages through configured selectors, never hard-coded sites
+Selectors change; they belong in config, and a selector that matches nothing is reported as
+a layout change instead of silently finding nothing.
+
+## First fetch is a baseline
+Without it, switching the clerk on would alert on the whole existing backlog.
+
+## Save first, alert second
+A failed alert stays pending (alerted_at NULL) and is retried without duplicates.
+
+## Website text is untrusted
+Plain-text alerts, escaped Slack output, stripped control characters, truncated titles.
+
+## Alert errors never contain secrets
+Telegram's URL contains the bot token, so errors carry only the status code or error type.
+
+
+## The API polls the database for live prices
+It keeps the API decoupled from the feed process and works with the existing recorder.
+Cost: a 1 to 3 second delay. Redis Streams will replace the polling later.
+
+## Server-Sent Events, not WebSockets
+Updates are one-way. The browser reconnects by itself and no extra protocol code is needed.
+
+## The dashboard proxies through its own server
+The token and backend address stay server-side, there is no CORS, and only simple
+path segments are forwarded.
+
+## Ledger endpoints reuse the assistant's tools
+One implementation of every number. The API maps tool errors to 422 and bugs to 500.
+
+## Chat is opt-in and guarded
+Off by default, with a rate limit, a concurrency cap and a length limit, because every
+question costs money and can be abused.
