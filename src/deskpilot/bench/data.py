@@ -19,7 +19,9 @@ def _price(rng: random.Random, symbol: str) -> Decimal:
     return Decimal(rng.randint(low * 100, high * 100)) / 100
 
 
-def make_tick(index: int, rng: random.Random, *, received_time: datetime | None = None) -> PriceTick:
+def make_tick(
+    index: int, rng: random.Random, *, received_time: datetime | None = None
+) -> PriceTick:
     """Tick number `index`. Every index gets its own exchange time, so no two ticks collide.
 
     Unless `received_time` is given, it is "now": the moment of creation, which is where

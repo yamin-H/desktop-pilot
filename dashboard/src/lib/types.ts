@@ -57,5 +57,26 @@ export type AnnouncementRow = {
   important: boolean;
   time: string | null;
 };
+export type Health = {
+  status: string;
+  database: string;
+  redis: string;
+  market_source: string;
+  market_poller: string;
+  time: string;
+};
 
+export type TradeRow = {
+  exchange: string;
+  trade_id: string;
+  symbol: string;
+  side: string;
+  quantity: string;
+  price: string;
+  fee: string;
+  fee_asset: string | null;
+  time: string;
+};
+
+export type TradesResponse = { total_matching: number; shown: number; trades: TradeRow[] };
 export type ChatResult = { answer: string; tools: { name: string; arguments: string; ok: boolean }[] };

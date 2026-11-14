@@ -2,8 +2,6 @@ import type { NextRequest } from "next/server";
 import { backendUrl } from "@/lib/proxy";
 
 // The browser talks only to this server. The backend address and the token stay here.
-export const dynamic = "force-dynamic";
-export const runtime = "nodejs";
 
 const BACKEND = process.env.BACKEND_URL ?? "http://127.0.0.1:8000";
 const TOKEN = process.env.API_TOKEN ?? "";

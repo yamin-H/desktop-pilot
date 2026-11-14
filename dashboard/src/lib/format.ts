@@ -28,3 +28,16 @@ export function safeHref(url: string): string {
   const trimmed = url.trim();
   return /^https?:\/\/[^\s]+$/i.test(trimmed) ? trimmed : "#";
 }
+
+/** "+12.50" for gains, "-3.00" for losses, "0.00" for zero, "—" for unknown. Exact text only. */
+export function signed(value: string | null | undefined): string {
+  if (value === null || value === undefined) return "—";
+  const text = withThousands(value);
+  return signClass(value) === "gain" ? `+${text}` : text;
+}
+
+/** "2026-11-12 08:00 UTC" from an ISO time such as 2026-11-12T08:00:00Z. */
+export function utcText(iso: string | null | undefined): string {
+  if (!iso) return "—";
+  return `${iso.slice(0, 16).replace("T", " ")} UTC`;
+}

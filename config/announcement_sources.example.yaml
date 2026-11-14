@@ -4,13 +4,13 @@
 # API or RSS feed if it has one. Keep the interval slow (the default is 5 minutes).
 # Selectors are CSS selectors; find them with your browser's "Inspect" tool.
 
-- name: demo
-  url: "{ROOT_URI}/data/clerk_demo/announcements.html"
-  item_selector: "ul.news li.item"   # one match per announcement
-  title_selector: "a"                # inside an item
-  link_selector: "a"                 # inside an item
-  date_selector: "time"              # optional
-  date_attribute: "datetime"         # optional: read the date from this attribute
+- name: kraken
+  url: "https://blog.kraken.com/category/product/listings"
+  item_selector: "article"              # CSS selector for each post card
+  title_selector: "h2 a, h3 a"         # CSS selector for the title
+  link_selector: "h2 a, h3 a"          # CSS selector for the link
+  date_selector: "time"                # optional date selector
+  date_attribute: "datetime"
 
 # - name: some-exchange
 #   url: "https://example.com/announcements"

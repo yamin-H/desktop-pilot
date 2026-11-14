@@ -5,7 +5,9 @@ Usage: uv run python scripts/stream_status.py
 
 import asyncio
 import sys
+
 from redis import exceptions as redis_errors
+
 from deskpilot.bus import make_redis
 from deskpilot.config import get_settings
 

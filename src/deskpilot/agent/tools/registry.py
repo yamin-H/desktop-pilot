@@ -45,11 +45,6 @@ def _simplify(node: Any) -> Any:
         return [_simplify(item) for item in node]
     if not isinstance(node, dict):
         return node
-    if "anyOf" in node:
-        options = [option for option in node["anyOf"] if option.get("type") != "null"]
-        if len(options) == 1:
-            rest = {key: value for key, value in node.items() if key != "anyOf"}
-            return _simplify({**rest, **options[0]})
     return {key: _simplify(value) for key, value in node.items() if key != "title"}
 
 

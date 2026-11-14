@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Protocol
+
 import asyncpg
 import openai
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, Query, Request
@@ -279,7 +280,7 @@ async def chat(body: ChatRequest, request: Request) -> ChatResponse:
             logger.warning("assistant failed: %s", error)
             raise HTTPException(502, "the assistant could not answer") from None
         except openai.OpenAIError as error:
-            logger.warning("AI service error: %s", type(error).__name__)
+            logger.warning("AI service error: %s: %s", type(error).__name__, error)
             raise HTTPException(502, "the AI service is unavailable") from None
     return ChatResponse(
         answer=answer.text,

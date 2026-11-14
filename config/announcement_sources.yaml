@@ -1,0 +1,18 @@
+# Copy to config/announcement_sources.yaml and edit.
+#
+# Before adding a REAL site: read its terms of use and robots.txt, and prefer an official
+# API or RSS feed if it has one. Keep the interval slow (the default is 5 minutes).
+# Selectors are CSS selectors; find them with your browser's "Inspect" tool.
+
+- name: demo
+  url: "{ROOT_URI}/data/clerk_demo/announcements.html"
+  item_selector: "ul.news li.item"   # one match per announcement
+  title_selector: "a"                # inside an item
+  link_selector: "a"                 # inside an item
+  date_selector: "time"              # optional
+  date_attribute: "datetime"         # optional: read the date from this attribute
+
+# - name: some-exchange
+#   url: "https://example.com/announcements"
+#   item_selector: "..."
+#   wait_for_selector: "..."         # use when the page builds its list with JavaScript

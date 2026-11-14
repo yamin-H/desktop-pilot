@@ -1,29 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { Market } from "./types";
-
-export function useMarketStream() {
-  const [market, setMarket] = useState<Market | null>(null);
-  const [connected, setConnected] = useState(false);
-
-  useEffect(() => {
-    const source = new EventSource("/api/stream");
-    source.onopen = () => setConnected(true);
-    source.onerror = () => setConnected(false); // the browser reconnects by itself
-    source.addEventListener("market", (event) => {
-      try {
-        setMarket(JSON.parse((event as MessageEvent<string>).data) as Market);
-        setConnected(true);
-      } catch {
-        // ignore one malformed message
-      }
-    });
-    return () => source.close();
-  }, []);
-
-  return { market, connected };
-}
 
 export function usePolling<T>(path: string, everyMs: number) {
   const [data, setData] = useState<T | null>(null);
@@ -46,7 +23,7 @@ export function usePolling<T>(path: string, everyMs: number) {
           setError(typeof body?.detail === "string" ? body.detail : `HTTP ${response.status}`);
         }
       } catch {
-        if (!stopped) setError("cannot reach the server");
+        if (!stopped) setError("Can't reach the server.");
       }
       if (!stopped) timer = setTimeout(load, everyMs);
     }

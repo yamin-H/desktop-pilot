@@ -271,3 +271,18 @@ changed. Feeds still never wait for the network.
 
 ## Dead-letter stream for unreadable entries
 A bad entry is kept for inspection and acknowledged, so it cannot block everything behind it.
+
+
+## Benchmarks measure the internal pipeline with synthetic, deterministic data
+Live exchange traffic is not repeatable and includes network time we do not control. The
+numbers are stated as internal pipeline numbers, with the environment printed alongside.
+
+## Every benchmark stage verifies its own result
+A fast but wrong pipeline is not a result: stored rows, stream length and injected breaks are
+all checked, and a mismatch fails the run.
+
+## Percentiles are nearest-rank, with exact fractions
+Simple to explain, and floating-point noise cannot move a percentile.
+
+## The flush interval is reported, not hidden
+Batching is a latency/throughput trade-off, so the default run shows two settings.

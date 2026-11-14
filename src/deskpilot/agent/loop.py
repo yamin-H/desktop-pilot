@@ -2,7 +2,7 @@ import json
 import logging
 from dataclasses import dataclass
 from typing import Any
-
+import openai
 from deskpilot.agent.prompts import system_prompt
 from deskpilot.agent.tools import ToolContext, ToolRegistry
 
@@ -64,13 +64,24 @@ class Agent:
         records: list[ToolCallRecord] = []
 
         for step in range(1, self._max_steps + 1):
-            response = await self._client.chat.completions.create(
-                model=self._model,
-                messages=messages,
-                tools=self._registry.schemas(),
-                tool_choice="auto",
-                temperature=self._temperature,
-            )
+            try:
+                response = await self._client.chat.completions.create(
+                    model=self._model,
+                    messages=messages,
+                    tools=self._registry.schemas(),
+                    tool_choice="auto",
+                    temperature=self._temperature,
+                )
+            except openai.BadRequestError as error:
+                if getattr(error, "code", "") != "tool_use_failed":
+                    raise
+                logger.warning("tool call rejected (tool_use_failed); retrying without tools")
+                response = await self._client.chat.completions.create(
+                    model=self._model,
+                    messages=messages,
+                    tool_choice="none",
+                    temperature=self._temperature,
+                )
             message = response.choices[0].message
             requested = list(message.tool_calls or [])
 

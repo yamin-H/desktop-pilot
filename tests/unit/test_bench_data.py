@@ -19,8 +19,10 @@ def test_generated_ticks_are_deterministic_and_all_different():
 def test_ticks_cover_both_exchanges_and_both_pairs():
     ticks = make_ticks(8)
     assert {(t.exchange.value, t.symbol) for t in ticks} == {
-        ("binance", "BTC/USDT"), ("binance", "ETH/USDT"),
-        ("kraken", "BTC/USDT"), ("kraken", "ETH/USDT"),
+        ("binance", "BTC/USDT"),
+        ("binance", "ETH/USDT"),
+        ("kraken", "BTC/USDT"),
+        ("kraken", "ETH/USDT"),
     }
 
 
